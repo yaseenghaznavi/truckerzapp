@@ -80,3 +80,6 @@ signupForm.addEventListener("submit", function (event) {
 
     signupForm.reset();
 });
+
+// About logo and paragraph scrolling
+
