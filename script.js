@@ -29,7 +29,7 @@ window.addEventListener(
 
 // nav bar links effect
 
-document.querySelectorAll(".navigation a, .hero-button").forEach((link) => {
+document.querySelectorAll(".navigation a, .hero-button, .about-button").forEach((link) => {
     function setNearestCorner(event) {
         const bounds = link.getBoundingClientRect();
 
@@ -65,6 +65,66 @@ if (aboutLeft) {
     );
 
     aboutObserver.observe(aboutLeft);
+}
+
+// about - left column p and h2 tags
+
+const aboutContent = document.querySelector(".about-content");
+
+if (aboutContent) {
+    const animatedElements = [
+        aboutContent.querySelector(".about-label"),
+        aboutContent.querySelector("h2")
+    ];
+
+    let wordIndex = 0;
+
+    animatedElements.forEach((element) => {
+        const textNodes = [];
+        const walker = document.createTreeWalker(
+            element,
+            NodeFilter.SHOW_TEXT
+        );
+
+        while (walker.nextNode()) {
+            textNodes.push(walker.currentNode);
+        }
+
+        textNodes.forEach((textNode) => {
+            const fragment = document.createDocumentFragment();
+            const parts = textNode.textContent.split(/(\s+)/);
+
+            parts.forEach((part) => {
+                if (!part || /^\s+$/.test(part)) {
+                    fragment.appendChild(document.createTextNode(part));
+                    return;
+                }
+
+                const word = document.createElement("span");
+                word.className = "about-word";
+                word.textContent = part;
+                word.style.setProperty("--word", wordIndex++);
+
+                fragment.appendChild(word);
+            });
+
+            textNode.replaceWith(fragment);
+        });
+    });
+
+    const aboutContentObserver = new IntersectionObserver(
+        ([entry], observer) => {
+            if (entry.isIntersecting) {
+                aboutContent.classList.add("about-content-visible");
+                observer.unobserve(aboutContent);
+            }
+        },
+        {
+            threshold: 0.2
+        }
+    );
+
+    aboutContentObserver.observe(aboutContent);
 }
 
 // Mission, Vision and Experties
