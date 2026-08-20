@@ -18,7 +18,20 @@ body {
     font-family: "Sora", sans-serif;
     color: var(--text-color);
     background-color: var(--light-background);
-}   
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: -4px;
+    left: 1%;
+    z-index: 9999;
+    width: 98%;
+    height: 1px;
+    border-radius: 0 0 50% 50%;
+    box-shadow: 0 3px 9px 2px rgba(0, 0, 0, 0.40);
+    pointer-events: none;
+}
 
 .announcement-bar {
     padding: 10px;
@@ -27,11 +40,6 @@ body {
     text-align: center;
     font-size: 14px;
     /* box-shadow: inset 0 2px 14px -8px rgba(0, 0, 0, 0.8); */
-    background-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.10) 0,
-        transparent 8px
-    );
 }
 
 
@@ -43,6 +51,21 @@ body {
     padding: 4px 25px;
     border-radius: 10px;
     background-color: var(--white-color);
+    position: sticky;
+    top: 12px;
+    z-index: 1000;
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+    will-change: transform;
+}
+
+.site-header.nav-hidden {
+    transform: translateY(calc(-100% - 25px));
+}
+
+.site-header.nav-scrolled {
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.30);
 }
 
 .logo img {
@@ -63,12 +86,35 @@ body {
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 7px;
+    background-color: transparent;
+}
+
+.navigation a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: #0093e9;
+    clip-path: circle(
+        0 at var(--hover-x, 100%) var(--hover-y, 100%)
+    );
+    transition: clip-path 0.4s ease;
+}
+
+.navigation a:hover::before,
+.navigation a.active::before {
+    clip-path: circle(
+        150% at var(--hover-x, 100%) var(--hover-y, 100%)
+    );
 }
 
 .navigation a:hover,
 .navigation a.active {
-    border-radius: 7px;
-    background-color: #0093e9;
     color: var(--white-color);
 }
 
@@ -108,6 +154,21 @@ body {
     -webkit-text-stroke: 0.9px var(--dark-color);
 }
 
+.hero-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateX(70px);
+    animation: heroWordEntrance 0.65s ease forwards;
+    animation-delay: calc(0.15s + var(--word) * 0.06s);
+}
+
+@keyframes heroWordEntrance {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .hero-information {
     padding-top: 10px;
 }
@@ -119,6 +180,21 @@ body {
     line-height: 1.7;
 }
 
+.hero-description-line {
+    display: block;
+    opacity: 0;
+    transform: translateX(-60px);
+    animation: heroInformationEntrance 0.65s ease forwards;
+    animation-delay: calc(0s + var(--line) * 0.18s);
+}
+
+@keyframes heroInformationEntrance {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .hero-badge {
     position: relative;
     width: 120px;
@@ -127,19 +203,38 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: translateY(80px);
+    animation: heroBadgeEntrance 0.75s ease 0.35s forwards;
+}
+
+@keyframes heroBadgeEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .badge-ring {
     position: absolute;
     width: 100%;
     height: 100%;
-    animation: rotateBadge 25s linear infinite;
+    animation: rotateBadge 28s linear infinite;
+}
+
+.badge-center-icon {
+    position: relative;
+    z-index: 1;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    opacity: 0.65;
 }
 
 .badge-ring text {
     fill: var(--dark-color);
     font-size: 7.5px;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.6px;
 }
 
@@ -190,10 +285,43 @@ body {
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
+
+    position: absolute;
+    z-index: 2;
+    overflow: hidden;
+    isolation: isolate;
+
+    opacity: 0;
+    transform: translateY(70px);
+    animation: heroButtonEntrance 0.7s ease 0.4s forwards;
+}
+
+@keyframes heroButtonEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: #0093e9;
+    clip-path: circle(
+        0 at var(--hover-x, 100%) var(--hover-y, 100%)
+    );
+    transition: clip-path 0.4s ease;
+}
+
+.hero-button:hover::before {
+    clip-path: circle(
+        150% at var(--hover-x, 100%) var(--hover-y, 100%)
+    );
 }
 
 .hero-button:hover {
-    background-color: #0093e9;
     color: var(--white-color);
 }
 
@@ -266,6 +394,37 @@ body {
     font-size: 16px;
     line-height: 1.7;
 }
+
+/* about logo and information effect starts */
+.about-logo {
+    opacity: 0;
+    transform: translateX(-90px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.2s ease;
+}
+
+.about-introduction {
+    opacity: 0;
+    transform: translateY(35px);
+    transition:
+        opacity 0.7s ease,
+        transform 0.7s ease;
+}
+
+.about-left.about-visible .about-logo {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s;
+}
+
+.about-left.about-visible .about-introduction {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.55s;
+}
+
+/* about logo and information effect ends */
 
 .about-label {
     margin-bottom: 25px;

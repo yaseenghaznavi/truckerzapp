@@ -1,29 +1,71 @@
-// signup script
+// nav bar disapperaing effect
 
-const signupForm = document.querySelector("#signup-form");
-const userName = document.querySelector("#user-name");
-const userEmail = document.querySelector("#user-email");
-const userMessage = document.querySelector("#user-message");
-const formMessage = document.querySelector("#form-message");
+const siteHeader = document.querySelector(".site-header");
+let previousScrollPosition = window.scrollY;
 
-signupForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+window.addEventListener(
+    "scroll",
+    () => {
+        const currentScrollPosition = window.scrollY;
+        const movement = currentScrollPosition - previousScrollPosition;
 
-    if (
-        userName.value.trim() === "" ||
-        userEmail.value.trim() === "" ||
-        userMessage.value.trim() === ""
-    ) {
-        formMessage.textContent = "Please complete all fields.";
-        formMessage.style.color = "red";
-        return;
+        if (currentScrollPosition <= 80) {
+            siteHeader.classList.remove("nav-hidden", "nav-scrolled");
+        } else {
+            siteHeader.classList.add("nav-scrolled");
+
+            if (movement > 5) {
+                siteHeader.classList.add("nav-hidden");
+                document.body.classList.remove("nav-is-visible");
+            } else if (movement < -5) {
+                siteHeader.classList.remove("nav-hidden");
+            }
+        }
+
+        previousScrollPosition = currentScrollPosition;
+    },
+    { passive: true }
+);
+
+// nav bar links effect
+
+document.querySelectorAll(".navigation a, .hero-button").forEach((link) => {
+    function setNearestCorner(event) {
+        const bounds = link.getBoundingClientRect();
+
+        const horizontal =
+            event.clientX - bounds.left < bounds.width / 2 ? "0%" : "100%";
+
+        const vertical =
+            event.clientY - bounds.top < bounds.height / 2 ? "0%" : "100%";
+
+        link.style.setProperty("--hover-x", horizontal);
+        link.style.setProperty("--hover-y", vertical);
     }
 
-    formMessage.textContent = "Thank you! Your form is complete.";
-    formMessage.style.color = "green";
-
-    signupForm.reset();
+    link.addEventListener("mouseenter", setNearestCorner);
+    link.addEventListener("mouseleave", setNearestCorner);
 });
+
+// about logo and information effect
+
+const aboutLeft = document.querySelector(".about-left");
+
+if (aboutLeft) {
+    const aboutObserver = new IntersectionObserver(
+        ([entry], observer) => {
+            if (entry.isIntersecting) {
+                aboutLeft.classList.add("about-visible");
+                observer.unobserve(aboutLeft);
+            }
+        },
+        {
+            threshold: 0.25
+        }
+    );
+
+    aboutObserver.observe(aboutLeft);
+}
 
 // Mission, Vision and Experties
 
