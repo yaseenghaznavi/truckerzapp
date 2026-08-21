@@ -571,3 +571,23 @@ if (footerInformation) {
         footerBottomObserver.observe(footerBottom);
     }
 }
+
+// Responsiveness
+
+const menuToggle = document.querySelector(".menu-toggle");
+const mobileNavigation = document.querySelector(".navigation");
+
+menuToggle?.addEventListener("click", () => {
+    const isOpen = mobileNavigation.classList.toggle("menu-open");
+
+    menuToggle.classList.toggle("menu-active", isOpen);
+    menuToggle.setAttribute("aria-expanded", isOpen);
+});
+
+mobileNavigation?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+        mobileNavigation.classList.remove("menu-open");
+        menuToggle.classList.remove("menu-active");
+        menuToggle.setAttribute("aria-expanded", "false");
+    });
+});
