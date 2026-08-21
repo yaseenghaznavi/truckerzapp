@@ -130,24 +130,69 @@ if (aboutContent) {
 
 // Mission, Vision and Experties
 
-const aboutTabText = {
-    mission:
-        "To simplify and modernize how carriers operate across the USA by replacing manual processes with intelligent, automated workflows—enabling faster decisions, better efficiency, and consistent growth.",
+const sharedAboutTabContent = {
+    mission: `To simplify and modernize how carriers operate across the USA
+              by replacing manual processes with intelligent, automated
+              workflows—enabling faster decisions, better efficiency and
+              consistent growth.`,
 
-    vision:
-        "To become the leading digital platform for carrier operations, where every aspect of the business — from load handling to documentation — is managed seamlessly in one place.",
+    vision: `To create a smarter and more connected trucking industry where
+             carriers can reduce manual work, manage operations efficiently
+             and grow with confidence.`,
 
-    expertise:
-        "Built by the team behind Truckerz App, with hands-on experience supporting carriers and managing real-world logistics operations at scale. We understand the challenges — and we’ve engineered solutions that solve them."
+    expertise: `We specialize in logistics automation, load management,
+                route optimization, carrier support and intelligent tools
+                designed for modern fleet operations.`
 };
 
-document.querySelectorAll(".about-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-        document.querySelector(".about-tab.active")?.classList.remove("active");
-        tab.classList.add("active");
+document.querySelectorAll(".about-tabs").forEach((tabGroup) => {
+    const section = tabGroup.closest(
+        ".about-content, .about-overview-content"
+    );
 
-        document.querySelector("#about-tab-text").textContent =
-            aboutTabText[tab.dataset.tab];
+    const text = section?.querySelector("#about-tab-text");
+    const buttons = tabGroup.querySelectorAll(".about-tab");
+
+    if (!text || !buttons.length) return;
+
+    tabGroup.classList.add("shared-tabs");
+    text.classList.add("shared-tab-text");
+
+    const observer = new IntersectionObserver(
+        ([entry], currentObserver) => {
+            if (entry.isIntersecting) {
+                tabGroup.classList.add("tabs-visible");
+                text.classList.add("tab-text-visible");
+                currentObserver.unobserve(tabGroup);
+            }
+        },
+        {
+            threshold: 0.25
+        }
+    );
+
+    observer.observe(tabGroup);
+
+    let switchingTimer;
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+            if (button.classList.contains("active")) return;
+
+            buttons.forEach((tab) => tab.classList.remove("active"));
+            button.classList.add("active");
+
+            text.classList.add("tab-text-switching");
+
+            clearTimeout(switchingTimer);
+
+            switchingTimer = setTimeout(() => {
+                text.textContent =
+                    sharedAboutTabContent[button.dataset.tab];
+
+                text.classList.remove("tab-text-switching");
+            }, 250);
+        });
     });
 });
 
@@ -572,7 +617,7 @@ if (footerInformation) {
     }
 }
 
-// Responsiveness
+// Responsiveness home page
 
 const menuToggle = document.querySelector(".menu-toggle");
 const mobileNavigation = document.querySelector(".navigation");
@@ -591,3 +636,186 @@ mobileNavigation?.querySelectorAll("a").forEach((link) => {
         menuToggle.setAttribute("aria-expanded", "false");
     });
 });
+
+// About hero title
+
+const aboutHeroTitle = document.querySelector(".about-hero h1");
+
+if (aboutHeroTitle) {
+    let wordIndex = 0;
+
+    const walker = document.createTreeWalker(
+        aboutHeroTitle,
+        NodeFilter.SHOW_TEXT
+    );
+
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach((node) => {
+        const fragment = document.createDocumentFragment();
+
+        node.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part.trim()) {
+                fragment.append(part);
+                return;
+            }
+
+            const span = document.createElement("span");
+            span.className = "about-hero-word";
+            span.style.setProperty("--word", wordIndex++);
+            span.textContent = part;
+            fragment.append(span);
+        });
+
+        node.replaceWith(fragment);
+    });
+
+    requestAnimationFrame(() => {
+        aboutHeroTitle.classList.add("about-hero-title-visible");
+    });
+}
+
+// About hero image
+
+async function initializeAboutLiquidImage() {
+    const holder = document.querySelector(".about-hero-image");
+
+    if (!holder || !window.PIXI) return;
+
+    const app = new PIXI.Application();
+
+    await app.init({
+        resizeTo: holder,
+        backgroundAlpha: 0,
+        antialias: true
+    });
+
+    holder.appendChild(app.canvas);
+
+    const imagePath = holder.dataset.image;
+
+    const [imageTexture, displacementTexture] = await Promise.all([
+        PIXI.Assets.load(imagePath),
+        PIXI.Assets.load(
+            "https://pixijs.com/assets/pixi-filters/displacement_map_repeat.jpg"
+        )
+    ]);
+
+    displacementTexture.source.addressMode = "repeat";
+
+    const image = new PIXI.Sprite(imageTexture);
+    const imageLayer = new PIXI.Container();
+    const displacement = new PIXI.Sprite(displacementTexture);
+
+    imageLayer.addChild(image);
+    app.stage.addChild(displacement);
+    app.stage.addChild(imageLayer);
+
+    const filter = new PIXI.DisplacementFilter(displacement);
+    filter.scale.set(50, 50);
+    imageLayer.filters = [filter];
+
+    displacement.alpha = 0.1;
+    displacement.scale.set(2);
+
+    function coverImage() {
+        const width = holder.clientWidth;
+        const height = holder.clientHeight;
+        const scale = Math.max(
+            width / imageTexture.width,
+            height / imageTexture.height
+        );
+
+        image.scale.set(scale);
+        image.position.set(
+            (width - image.width) / 2,
+            (height - image.height) / 2
+        );
+    }
+
+    coverImage();
+
+    new ResizeObserver(coverImage).observe(holder);
+
+    let targetStrength = 50;
+
+    holder.addEventListener("mouseenter", () => {
+        targetStrength = 125;
+    });
+
+    holder.addEventListener("mouseleave", () => {
+        targetStrength = 50;
+    });
+
+    app.ticker.add((ticker) => {
+        displacement.x += 2.75 * ticker.deltaTime;
+        displacement.y += 2.45 * ticker.deltaTime;
+
+        filter.scale.x +=
+            (targetStrength - filter.scale.x) * 0.06;
+
+        filter.scale.y +=
+            (targetStrength - filter.scale.y) * 0.06;
+    });
+}
+
+initializeAboutLiquidImage();
+
+// About overview
+
+const aboutOverview = document.querySelector(".about-overview");
+const aboutOverviewHeading = document.querySelector(
+    ".about-overview-content h2"
+);
+
+if (aboutOverview && aboutOverviewHeading) {
+    let wordIndex = 0;
+
+    const walker = document.createTreeWalker(
+        aboutOverviewHeading,
+        NodeFilter.SHOW_TEXT
+    );
+
+    const textNodes = [];
+
+    while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+    }
+
+    textNodes.forEach((node) => {
+        const fragment = document.createDocumentFragment();
+
+        node.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part.trim()) {
+                fragment.append(part);
+                return;
+            }
+
+            const span = document.createElement("span");
+            span.className = "about-overview-word";
+            span.style.setProperty("--word", wordIndex++);
+            span.textContent = part;
+            fragment.append(span);
+        });
+
+        node.replaceWith(fragment);
+    });
+
+    const overviewObserver = new IntersectionObserver(
+        ([entry], observer) => {
+            if (entry.isIntersecting) {
+                aboutOverview.classList.add("overview-visible");
+                observer.unobserve(aboutOverview);
+            }
+        },
+        {
+            threshold: 0.2
+        }
+    );
+
+    overviewObserver.observe(aboutOverview);
+}

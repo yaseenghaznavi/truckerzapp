@@ -10,13 +10,57 @@
 </head>
 
  <body>
+
+    <svg class="water-filter-definitions"
+        aria-hidden="true">
+        <filter id="about-water-text"
+                x="-15%"
+                y="-25%"
+                width="130%"
+                height="150%">
+
+            <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.012 0.035"
+                numOctaves="2"
+                seed="4"
+                result="waterNoise">
+
+                <animate
+                    attributeName="baseFrequency"
+                    values="
+                        0.012 0.035;
+                        0.018 0.045;
+                        0.012 0.035"
+                    dur="6s"
+                    repeatCount="indefinite">
+                </animate>
+            </feTurbulence>
+
+            <feDisplacementMap
+                in="SourceGraphic"
+                in2="waterNoise"
+                scale="3"
+                xChannelSelector="R"
+                yChannelSelector="G">
+
+                <animate
+                    attributeName="scale"
+                    values="2;5;2"
+                    dur="4s"
+                    repeatCount="indefinite">
+                </animate>
+            </feDisplacementMap>
+        </filter>
+    </svg>
+
     <div class="announcement-bar">
         <p>Scale operations without adding extra workload.</p>
     </div>
 
     <header class="site-header">
         <a href="index.html" class="logo">
-            <img src="images/logo.png" alt="TruckerzApp logo">
+            <img src="images/home/logo.png" alt="TruckerzApp logo">
         </a>
 
         <nav class="navigation">
@@ -43,12 +87,177 @@
     <main class="about-page">
 
         <section class="about-hero">
+
             <h1>
                 Explore more<br>
-                <span>about us</span>
+                <span class="about-hero-outline">about us</span>
             </h1>
 
-            <div class="about-hero-image"></div>
+            <div class="about-hero-image"
+                data-image="images/about/hero-image.jpg">
+            </div>
+
+        </section>
+
+        <section class="about-overview">
+
+            <svg class="about-background-watermark"
+                viewBox="0 0 660 660"
+                aria-hidden="true">
+                <use href="#about-watermark-shape"></use>
+            </svg>
+
+            <div class="about-overview-content">
+                <p class="about-page-label">
+                    About Us
+                </p>
+
+                <h2>
+                    Harnessing the <span class="blue-text">power</span><br>
+                    of intelligent automation<br>
+                    for <span class="outline-text">modern carriers</span>
+                    <span class="blue-text">.</span>
+                </h2>
+
+                <div class="about-tabs about-page-tabs">
+                    <button class="about-tab active" data-tab="mission">Our Mission</button>
+                    <button class="about-tab" data-tab="vision">Our Vision</button>
+                    <button class="about-tab" data-tab="expertise">Expertise</button>
+                </div>
+
+                <div class="about-tab-content">
+                    <p id="about-tab-text">
+                        To simplify and modernize how carriers operate across the USA by replacing manual processes with intelligent, automated workflows—enabling faster decisions, better efficiency, and consistent growth.
+                    </p>
+                </div>
+            </div>
+
+            <div class="about-overview-image">
+                <img src="images/about/about-overview-image.jpg"
+                    alt="TruckerzApp intelligent logistics platform">
+
+                <div class="about-page-badge">
+                    <svg class="badge-ring" viewBox="0 0 100 100">
+                        <defs>
+                            <path
+                                id="about-badge-circle"
+                                d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0">
+                            </path>
+                        </defs>
+
+                        <text>
+                            <textPath href="#about-badge-circle">
+                                ARTIFICIAL INTELLIGENCE SOLUTIONS - SINCE 2025 -
+                            </textPath>
+                        </text>
+                    </svg>
+
+                    <svg class="about-badge-icon"
+                        viewBox="0 0 660 660"
+                        aria-hidden="true">
+                        <path
+                            id="about-watermark-shape"
+                            d="M659.814 0.0910053C664.321 91.591 586.332 174.046 494.402 176.307C446.7 177.477 398.959 176.542 351.256 176.659C344.917 176.659 338.5 176.775 332.275 177.945C311.384 181.921 298.093 198.568 298.971 218.88C299.888 240.05 315.394 256.346 337.24 257.359C356.909 258.256 376.693 257.359 396.4 257.71C459.685 258.958 509.946 309.366 509.297 370.73C508.648 433.03 460.755 480.086 396.782 480.749C359.239 481.139 321.696 480.866 284.152 480.905C255.47 480.905 244.738 488.663 239.352 517.591C229.957 568.233 210.746 613.106 163.96 637.55C142.038 648.973 116.334 655.289 91.7003 658.213C62.292 661.682 32.1581 659.032 0 659.032C7.29477 626.634 14.093 596.42 20.9294 566.206C28.377 533.341 35.5572 500.397 43.4249 467.649C55.5701 417.24 91.2802 387.767 142.114 386.871C182.178 386.169 222.28 386.676 262.344 386.676C308.901 386.676 327.424 375.175 327.195 346.325C326.966 318.099 309.092 306.871 263.376 307.027C221.364 307.183 182.828 297.281 149.867 269.172C101.134 227.613 83.527 160.986 105.259 99.8559C126.417 40.3634 182.331 0.129953 244.585 0.0519813C377.571 -0.0649766 510.519 0.0519813 643.506 0.0519813H659.814Z"
+                            fill="currentColor">
+                        </path>
+                    </svg>
+                </div>
+            </div>          
+
+        </section>
+
+        <section class="company-history">
+
+            <div class="history-heading">
+                <p>Company History</p>
+
+                <h2>
+                    Built from <span class="outline-text">experience</span>
+                    <span class="blue-text">.</span>
+                    <br>
+                    Driven by <span class="outline-text">innovation</span>
+                    <span class="blue-text">.</span>
+                    
+                </h2>
+            </div>
+
+            <div class="history-grid">
+                <article class="history-card">
+                    <img src="images/about/journey-started.jpg" alt="TruckerzApp journey">
+
+                    <p class="history-label">The Journey Began</p>
+                    <h3>2018</h3>
+
+                    <p class="history-description">
+                        TruckerzApp was created to simplify daily operations for
+                        modern carriers.
+                    </p>
+                </article>
+
+                <article class="history-card">
+                    <img src="images/about/award.jpg" alt="Platform development">
+
+                    <p class="history-label">Platform Development</p>
+                    <h3>2025</h3>
+
+                    <p class="history-description">
+                        Intelligent tools were developed for loads, routes and fleet
+                        management.
+                    </p>
+                </article>
+
+                <article class="history-card">
+                    <img src="images/about/nominated.jpg" alt="TruckerzApp growth">
+
+                    <p class="history-label">Growing With Carriers</p>
+                    <h3>2026</h3>
+
+                    <p class="history-description">
+                        The platform continues expanding to support carrier growth
+                        across the USA.
+                    </p>
+                </article>
+            </div>
+
+        </section>
+
+        <section class="about-video">
+
+            <div class="about-video-banner">
+                <img src="images/about/hero-image.jpg"
+                    alt="TruckerzApp platform presentation">
+
+                <button class="about-video-button"
+                        type="button"
+                        aria-label="Play TruckerzApp video">
+                    Play
+                </button>
+            </div>
+
+        </section>
+
+        <section class="about-statistics">
+
+            <div class="about-stat">
+                <strong>9K+</strong>
+                <span>Projects Done</span>
+            </div>
+
+            <div class="about-stat">
+                <strong>10</strong>
+                <span>Teammates</span>
+            </div>
+
+            <div class="about-stat">
+                <strong>90</strong>
+                <span>World Base</span>
+            </div>
+
+            <div class="about-stat">
+                <strong>2%</strong>
+                <span>ROI Growth</span>
+            </div>
+
         </section>
 
     </main>
@@ -60,14 +269,14 @@
     <footer class="site-footer">
         <img
             class="footer-circuit"
-            src="images/footer-circuit.svg"
+            src="images/home/footer-circuit.svg"
             alt=""
         >
         <div class="footer-main">
             <div class="footer-information">
                 <img
                     class="footer-logo"
-                    src="images/footer-logo.png"
+                    src="images/home/footer-logo.png"
                     alt="TruckerzApp"
                 >
 
@@ -207,6 +416,8 @@
     </footer>
 
     <!-- Footer Ends -->
+
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
 
     <script src="script.js"></script>
 </body>
