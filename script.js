@@ -819,3 +819,123 @@ if (aboutOverview && aboutOverviewHeading) {
 
     overviewObserver.observe(aboutOverview);
 }
+
+// About Company Histroy
+
+const companyHistory = document.querySelector(".company-history");
+
+if (companyHistory) {
+    const historyObserver = new IntersectionObserver(
+        ([entry], observer) => {
+            if (entry.isIntersecting) {
+                companyHistory.classList.add("history-visible");
+                observer.unobserve(companyHistory);
+            }
+        },
+        { threshold: 0.2 }
+    );
+
+    historyObserver.observe(companyHistory);
+}
+
+// About video button
+
+const aboutVideo = document.querySelector(".about-video");
+const videoBanner = document.querySelector(".about-video-banner");
+const videoButton = document.querySelector(".about-video-button");
+
+if (aboutVideo && videoBanner && videoButton) {
+    const observer = new IntersectionObserver(
+        ([entry], currentObserver) => {
+            if (entry.isIntersecting) {
+                aboutVideo.classList.add("video-visible");
+                currentObserver.unobserve(aboutVideo);
+            }
+        },
+        { threshold: 0.2 }
+    );
+
+    observer.observe(aboutVideo);
+
+    let currentX = 0;
+    let currentY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let buttonCenterX = 0;
+    let buttonCenterY = 0;
+
+    const animateButton = () => {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+
+        videoButton.style.setProperty("--follow-x", `${currentX}px`);
+        videoButton.style.setProperty("--follow-y", `${currentY}px`);
+
+        requestAnimationFrame(animateButton);
+    };
+
+    videoBanner.addEventListener("pointerenter", () => {
+        const buttonRect = videoButton.getBoundingClientRect();
+
+        buttonCenterX = buttonRect.left + buttonRect.width / 2;
+        buttonCenterY = buttonRect.top + buttonRect.height / 2;
+    });
+
+    videoBanner.addEventListener("pointermove", (event) => {
+        targetX = event.clientX - buttonCenterX;
+        targetY = event.clientY - buttonCenterY;
+    });
+
+    videoBanner.addEventListener("pointerleave", () => {
+        targetX = 0;
+        targetY = 0;
+    });
+
+    animateButton();
+}
+
+// About stats
+
+const aboutStatisticsSection = document.querySelector(".about-statistics");
+
+if (aboutStatisticsSection) {
+    const statisticNumbers =
+        aboutStatisticsSection.querySelectorAll(".about-stat strong");
+
+    const countNumber = (element) => {
+        const originalValue = element.textContent.trim();
+        const target = parseInt(originalValue, 10);
+        const suffix = originalValue.replace(/[0-9]/g, "");
+        const duration = 1600;
+        const startTime = performance.now();
+
+        const updateNumber = (currentTime) => {
+            const progress = Math.min(
+                (currentTime - startTime) / duration,
+                1
+            );
+
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            element.textContent =
+                Math.floor(target * easedProgress) + suffix;
+
+            if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+            }
+        };
+
+        requestAnimationFrame(updateNumber);
+    };
+
+    const statisticsObserver = new IntersectionObserver(
+        ([entry], observer) => {
+            if (entry.isIntersecting) {
+                statisticNumbers.forEach(countNumber);
+                observer.unobserve(aboutStatisticsSection);
+            }
+        },
+        { threshold: 0.35 }
+    );
+
+    statisticsObserver.observe(aboutStatisticsSection);
+}
